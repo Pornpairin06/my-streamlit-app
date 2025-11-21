@@ -15,7 +15,7 @@ def load_data():
 st.title('Simple Data Explorer')
 
 # Load the data
-df = load_data()
+#df = load_data()
 
 # 1. Add a Widget to control the data
 st.subheader('Filter Data')
