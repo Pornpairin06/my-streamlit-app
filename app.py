@@ -12,7 +12,7 @@ def load_data():
    )
    return data
 
-#st.title('Simple Data Explorer')
+st.title('Simple Data Explorer')
 
 # Load the data
 df = load_data()
