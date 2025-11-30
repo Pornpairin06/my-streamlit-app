@@ -78,7 +78,7 @@ st.markdown("กรอกข้อมูลของคุณและให้ 
 with st.form("user_form"):
     name = st.text_input("ชื่อ")
     birth = st.date_input("วันเกิด",min_value=date(1950,1,1),max_value=date.today(),value=date(2025,1,1))
-    time = st.time_input("เวลาเกิด", value=time(12,0))
+    time = st.time_input("เวลาเกิด", value=time(12,0),step=60)
     focus = st.text_area("คำถามที่อยากให้เน้น", "")
     submit = st.form_submit_button("เพิ่มข้อมูล")
     
