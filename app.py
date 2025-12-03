@@ -10,13 +10,13 @@ with st.form("user_form"):
     name = st.text_input("ชื่อของคุณ")
     dob = st.date_input("วันเกิด")
     time_of_birth = st.text_input("เวลาเกิด (เช่น 02:45)")
-    user_question = st.text_area("คำถามเกี่ยวกับดวงชะตาของคุณ")
+    question = st.text_area("คำถามเกี่ยวกับดวงชะตาของคุณ")
     api_key = st.text_input("กรอก Gemini API Key ของคุณ (AIzaSy...)", type="password")
     
     submitted = st.form_submit_button("ถามดวง")
 
 if submitted:
-    if not all([name, dob, time_of_birth, user_question, api_key]):
+    if not all([name, dob, time_of_birth, question, api_key]):
         st.warning("กรุณากรอกทุกช่องให้ครบ")
     else:
         # --- เตรียมข้อความที่จะส่งให้ Gemini ---
@@ -25,20 +25,22 @@ if submitted:
         วันเกิด: {dob.strftime('%d/%m/%Y')}
         เวลาเกิด: {time_of_birth}
         
-        คำถาม: {user_question}
+        คำถาม: {question}
         
         กรุณาตอบคำถามเกี่ยวกับดวงชะตาของผู้ใช้
         """
 
-        url = "https://generativelanguage.googleapis.com/v1beta2/models/text-bison-001:generateText"
-        headers = {"Content-Type": "application/json"}
-        payload = {
-            "prompt": prompt,
-            "temperature": 0.7,
-            "maxOutputTokens": 500
-        }
-
-        try:
+        url = "https://generativelanguage.googleapis.com/v1beta2/models/gemini-1.5-flash:generateContent?key={api_key}"
+        data =  {
+    "contents": [{
+        "parts": [{
+            "text": f"ชื่อ: {name}\nวันเกิด: {dob}\nเวลาเกิด: {time_of_birth}\nคำถาม: {question}"
+        }]
+    }]
+}
+        response = requests.post(url,json=data)
+        print(response.json())
+    """try:
             # ส่ง request ไป Gemini API
             response = requests.post(f"{url}?key={api_key}", json=payload, headers=headers, timeout=15)
             response.raise_for_status()
@@ -58,4 +60,4 @@ if submitted:
         except requests.exceptions.Timeout as errt:
             st.error(f"Timeout Error: {errt}")
         except Exception as e:
-            st.error(f"เกิดข้อผิดพลาด: {e}")
+            st.error(f"เกิดข้อผิดพลาด: {e}")"""
