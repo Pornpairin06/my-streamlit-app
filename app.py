@@ -38,27 +38,30 @@ if submitted:
         }]
     }]
 }
+        print("Prompt ที่ส่งให้ Gemini:",prompt)
+        print("Data ที่ส่ง:",data)
         response = requests.post(url,json=data)
-        print(response.json())
+        print("Status:",response.status_code)
+        print("Text:",response.text)
 
-    """try:
+    #try:
             # ส่ง request ไป Gemini API
-            response = requests.post(f"{url}?key={api_key}", json=payload, headers=headers, timeout=15)
-            response.raise_for_status()
-            data = response.json()
+           # response = requests.post(f"{url}?key={api_key}", json=payload, headers=headers, timeout=15)
+           # response.raise_for_status()
+           # data = response.json()
             
             # ดึงคำตอบ
-            answer = data.get("candidates", [{}])[0].get("content", "ไม่พบคำตอบจาก Gemini")
+            #answer = data.get("candidates", [{}])[0].get("content", "ไม่พบคำตอบจาก Gemini")
             
             # แสดงผลในเว็บ
-            st.success("คำตอบจาก Gemini AI:")
-            st.markdown(f"💫 {answer}")
+            #st.success("คำตอบจาก Gemini AI:")
+           # st.markdown(f"💫 {answer}")
 
-        except requests.exceptions.HTTPError as errh:
-            st.error(f"HTTP Error: {errh}")
-        except requests.exceptions.ConnectionError as errc:
-            st.error(f"Connection Error: {errc}")
-        except requests.exceptions.Timeout as errt:
-            st.error(f"Timeout Error: {errt}")
-        except Exception as e:
-            st.error(f"เกิดข้อผิดพลาด: {e}")"""
+       # except requests.exceptions.HTTPError as errh:
+           # st.error(f"HTTP Error: {errh}")
+        #except requests.exceptions.ConnectionError as errc:
+           # st.error(f"Connection Error: {errc}")
+       # except requests.exceptions.Timeout as errt:
+           # st.error(f"Timeout Error: {errt}")
+       # except Exception as e:
+           # st.error(f"เกิดข้อผิดพลาด: {e}")"""
