@@ -14,7 +14,7 @@ if st.button("ส่งคำถาม"):
         st.warning("กรุณากรอกทุกช่อง")
     else:
         # --- prompt เป็น single string ไม่มี indent ---
-        prompt = f"ชื่อ: {name}\nวันเกิด: {dob.strftime('%d/%m/%Y')}\nเวลาเกิด: {time_of_birth}\nคำถาม: {question}\nกรุณาตอบคำถามเกี่ยวกับดวงชะตาของผู้ใช้"
+        prompt = {"text": f"ชื่อ: {name}\nวันเกิด: {dob.strftime('%d/%m/%Y')}\nเวลาเกิด: {time_of_birth}\nคำถาม: {question}\nกรุณาตอบคำถามเกี่ยวกับดวงชะตาของผู้ใช้"}
 
         url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateText?key={api_key}"
 
