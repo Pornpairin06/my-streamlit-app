@@ -1,134 +1,61 @@
 import streamlit as st
-import pandas as pd
-import numpy as np
-import google.generativeai as genai
-import json
-from datetime import date,time,datetime
+import requests
+from datetime import datetime
 
-# -------------------------------
-# Page config + Theme
-# -------------------------------
-st.set_page_config(page_title="🔮 Mystic Purple Astrology", layout="wide")
+st.set_page_config(page_title="เว็บดูดวง AI", layout="centered")
+st.title("เว็บดูดวงด้วย Gemini AI ✨")
 
-st.markdown("""
-<style>
-.stApp {
-    background: linear-gradient(180deg, #3b0764, #6d28d9, #a855f7);
-    color: white;
-}
-.stSidebar {
-    background: linear-gradient(180deg, #6d28d9, #3b0764);
-    color: white;
-}
-h1, h2, h3 {
-    text-shadow: 0 2px 8px rgba(0,0,0,0.35);
-}
-.stButton>button {
-    background-color: #9d4edd;
-    color: white;
-    border: none;
-}
-.stButton>button:hover {
-    background-color: #7b2cbf;
-    color: white;
-}
-</style>
-""", unsafe_allow_html=True)
-
-# -------------------------------
-# Sidebar: API Key
-# -------------------------------
-st.sidebar.title("กรุณาใส่ API KEY")
-gemini_api_key = st.sidebar.text_input("Google Gemini API Key", type="password")
-
-if gemini_api_key:
-    genai.configure(gemini_api_key=gemini_api_key)
-
-# -------------------------------
-# Main Page
-# -------------------------------
-st.title("🔮 ดูดวงชะตาง่าย ๆ ผ่านเว็บแอป")
-
-st.markdown("โปรดกรอกข้อมูลของคุณด้านล่าง จากนั้นกดปุ่มยืนยัน และรอคำทำนายโชคชะตา ✨")
-
-# Input
+# --- ฟอร์มกรอกข้อมูลผู้ใช้ ---
 with st.form("user_form"):
-    name = st.text_input("ชื่อ")
-    birth = st.date_input("วันเกิด",min_value=date(1950,1,1),max_value=date.today(),value=date(2025,1,1))
-    time = st.time_input("เวลาเกิด", value=time(12,0),step=60)
-    question = st.text_area("คำถามที่ต้องการจะถาม", "")
-    submit = st.form_submit_button("ยืนยัน")
+    name = st.text_input("ชื่อของคุณ")
+    dob = st.date_input("วันเกิด")
+    time_of_birth = st.text_input("เวลาเกิด (เช่น 02:45)")
+    user_question = st.text_area("คำถามเกี่ยวกับดวงชะตาของคุณ")
+    api_key = st.text_input("กรอก Gemini API Key ของคุณ (AIzaSy...)", type="password")
     
-if submit:
-   if not gemini_api_key:
-        st.error("โปรดกรอก API KEY ในแถบด้านข้างก่อน!")
-   elif not question.strip():
-        st.error("กรุณากรอกคำถามที่ต้องการจะถาม")
-   else:
-      try:
-          prompt = f"""
-        You are a mystical astrologer. Provide a detailed horoscope.
-        Name: {['Name']}
-        Birthdate: {['Birthdate']}
-        Time: {['Time']}
-        Focus: {['Question']}
-        Sections: Summary, Love, Career, Health, Advice.
+    submitted = st.form_submit_button("ถามดวง")
+
+if submitted:
+    if not all([name, dob, time_of_birth, user_question, api_key]):
+        st.warning("กรุณากรอกทุกช่องให้ครบ")
+    else:
+        # --- เตรียมข้อความที่จะส่งให้ Gemini ---
+        prompt = f"""
+        ชื่อ: {name}
+        วันเกิด: {dob.strftime('%d/%m/%Y')}
+        เวลาเกิด: {time_of_birth}
+        
+        คำถาม: {user_question}
+        
+        กรุณาตอบคำถามเกี่ยวกับดวงชะตาของผู้ใช้
         """
-          model = genai.GenerativeModel("gemini-2.0-flash")
-          response = model.generate_content(prompt)
-          raw_text = response.text
-          data = json.loads(raw_text)
-          df = pd.DataFrame([data])
-          st.header("✨ ผลคำทำนายของคุณ")
-          st.dataframe(df)
-      except Exception as e:
+
+        url = "https://generativelanguage.googleapis.com/v1beta2/models/text-bison-001:generateText"
+        headers = {"Content-Type": "application/json"}
+        payload = {
+            "prompt": prompt,
+            "temperature": 0.7,
+            "maxOutputTokens": 500
+        }
+
+        try:
+            # ส่ง request ไป Gemini API
+            response = requests.post(f"{url}?key={api_key}", json=payload, headers=headers, timeout=15)
+            response.raise_for_status()
+            data = response.json()
+            
+            # ดึงคำตอบ
+            answer = data.get("candidates", [{}])[0].get("content", "ไม่พบคำตอบจาก Gemini")
+            
+            # แสดงผลในเว็บ
+            st.success("คำตอบจาก Gemini AI:")
+            st.markdown(f"💫 {answer}")
+
+        except requests.exceptions.HTTPError as errh:
+            st.error(f"HTTP Error: {errh}")
+        except requests.exceptions.ConnectionError as errc:
+            st.error(f"Connection Error: {errc}")
+        except requests.exceptions.Timeout as errt:
+            st.error(f"Timeout Error: {errt}")
+        except Exception as e:
             st.error(f"เกิดข้อผิดพลาด: {e}")
-    
-    
-   #results = []
-    
-    #for _, row in user_df.iterrows():
-       # prompt = f"""
-       # You are a mystical astrologer. Provide a detailed horoscope.
-       # Name: {row['Name']}
-       # Birthdate: {row['Birthdate']}
-        #Time: {row['Time']}
-        #Focus: {row['Question']}
-        #Sections: Summary, Love, Career, Health, Advice.
-       # """
-"""reading = call_gemini(prompt, gemini_api_key)
-        results.append({
-            "Name": row["Name"],
-            "Reading": reading,
-            "GeneratedAt": datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')
-        })
-    
-    result_df = pd.DataFrame(results)
-    st.dataframe(result_df)
-
-    # -------------------------------
-    # Download CSV
-    # -------------------------------
-    def convert_df(df):
-        return df.to_csv(index=False).encode('utf-8')
-    
-    csv = convert_df(result_df)
-    st.download_button(
-        label="📥 ดาวน์โหลดผลลัพธ์ เป็นไฟล์ CSV",
-        data=csv,
-        file_name='horoscope_results.csv',
-        mime='text/csv'
-    )
-    
-    # -------------------------------
-    # Share text
-    # -------------------------------
-    st.subheader("📤 แชร์ผลลัพธ์ของคุณเลย!!")
-    share_text = "\n\n".join([f"{r['Name']} — {r['Reading']}" for _, r in result_df.iterrows()])
-    st.text_area("คัดลอกข้อความด้านล่างเพื่อแชร์", share_text, height=200)"""
-
-# -------------------------------
-# Footer
-# -------------------------------
-st.markdown("---")
-st.caption("สร้างด้วย Streamlit x Google Gemini API | Mystic Purple Theme 💜")
