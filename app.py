@@ -30,7 +30,7 @@ if submitted:
         กรุณาตอบคำถามเกี่ยวกับดวงชะตาของผู้ใช้
         """
 
-        url = "https://generativelanguage.googleapis.com/v1beta2/models/gemini-1.5-flash:generateContent?key={api_key}"
+        url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
         data =  {
     "contents": [{
         "parts": [{
