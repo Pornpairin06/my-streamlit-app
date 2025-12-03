@@ -30,7 +30,7 @@ if submitted:
         กรุณาตอบคำถามเกี่ยวกับดวงชะตาของผู้ใช้
         """
 
-        url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+        url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
         data =  {
     "contents": [{
         "parts": [{
@@ -38,11 +38,8 @@ if submitted:
         }]
     }]
 }
-        print("Prompt ที่ส่งให้ Gemini:",prompt)
-        print("Data ที่ส่ง:",data)
         response = requests.post(url,json=data)
-        print("Status:",response.status_code)
-        print("Text:",response.text)
+        print(response.json())
 
     #try:
             # ส่ง request ไป Gemini API
