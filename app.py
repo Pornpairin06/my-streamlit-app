@@ -1,7 +1,8 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import requests
+import google.generativeai as genai
+import json
 from datetime import date,time,datetime
 
 # -------------------------------
@@ -40,32 +41,8 @@ h1, h2, h3 {
 st.sidebar.title("กรุณาใส่ API KEY")
 gemini_api_key = st.sidebar.text_input("Google Gemini API Key", type="password")
 
-# -------------------------------
-# Helpers
-# -------------------------------
-def call_gemini(prompt, key):
-    if not key:
-        return "กรุณาใส่ API Key ใน sidebar"
-    
-    url = "https://gemini.api.example.com/v1/chat/completions"  # แทนที่ด้วย endpoint จริงของ Google Gemini API
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {key}"
-    }
-    data = {
-        "model": "gemini-1.5",
-        "messages": [{"role": "user", "content": prompt}],
-        "temperature": 0.8
-    }
-    
-    try:
-        response = requests.post(url, headers=headers, json=data, timeout=15)
-        if response.status_code != 200:
-            return f"API Error: {response.status_code} - {response.text}"
-        result = response.json()
-        return result["choices"][0]["message"]["content"]
-    except Exception as e:
-        return str(e)
+if gemini_api_key:
+    genai.configure(gemini_api_key=gemini_api_key)
 
 # -------------------------------
 # Main Page
@@ -79,36 +56,47 @@ with st.form("user_form"):
     name = st.text_input("ชื่อ")
     birth = st.date_input("วันเกิด",min_value=date(1950,1,1),max_value=date.today(),value=date(2025,1,1))
     time = st.time_input("เวลาเกิด", value=time(12,0),step=60)
-    focus = st.text_area("คำถามที่ต้องการจะถาม", "")
+    question = st.text_area("คำถามที่ต้องการจะถาม", "")
     submit = st.form_submit_button("ยืนยัน")
     
 if submit:
-    user_df = pd.DataFrame([{
-        "Name": name,
-        "Birthdate": birth.strftime("%Y-%m-%d"),
-        "Time": time.strftime("%H:%M") if time else "",
-        "Question": focus
-    }])
-    
-    st.subheader("ข้อมูลของคุณ")
-    st.dataframe(user_df)
-
-    # -------------------------------
-    # Generate horoscope
-    # -------------------------------
-    st.header("✨ ผลคำทำนายของคุณ")
-    results = []
-    
-    for _, row in user_df.iterrows():
-        prompt = f"""
+   if not gemini_api_key:
+        st.error("โปรดกรอก API KEY ในแถบด้านข้างก่อน!")
+   elif not question.strip():
+        st.error("กรุณากรอกคำถามที่ต้องการจะถาม")
+   else:
+      try:
+          prompt = f"""
         You are a mystical astrologer. Provide a detailed horoscope.
-        Name: {row['Name']}
-        Birthdate: {row['Birthdate']}
-        Time: {row['Time']}
-        Focus: {row['Question']}
+        Name: {['Name']}
+        Birthdate: {['Birthdate']}
+        Time: {['Time']}
+        Focus: {['Question']}
         Sections: Summary, Love, Career, Health, Advice.
         """
-        reading = call_gemini(prompt, gemini_api_key)
+          model = genai.GenerativeModel("gemini-2.0-flash")
+          response = model.generate_content(prompt)
+          raw_text = response.text
+          data = json.loads(raw_text)
+          df = pd.DataFrame([data])
+          st.header("✨ ผลคำทำนายของคุณ")
+          st.dataframe(df)
+      except Exception as e:
+            st.error(f"เกิดข้อผิดพลาด: {e}")
+    
+    
+   #results = []
+    
+    #for _, row in user_df.iterrows():
+       # prompt = f"""
+       # You are a mystical astrologer. Provide a detailed horoscope.
+       # Name: {row['Name']}
+       # Birthdate: {row['Birthdate']}
+        #Time: {row['Time']}
+        #Focus: {row['Question']}
+        #Sections: Summary, Love, Career, Health, Advice.
+       # """
+"""reading = call_gemini(prompt, gemini_api_key)
         results.append({
             "Name": row["Name"],
             "Reading": reading,
@@ -137,7 +125,7 @@ if submit:
     # -------------------------------
     st.subheader("📤 แชร์ผลลัพธ์ของคุณเลย!!")
     share_text = "\n\n".join([f"{r['Name']} — {r['Reading']}" for _, r in result_df.iterrows()])
-    st.text_area("คัดลอกข้อความด้านล่างเพื่อแชร์", share_text, height=200)
+    st.text_area("คัดลอกข้อความด้านล่างเพื่อแชร์", share_text, height=200)"""
 
 # -------------------------------
 # Footer
