@@ -34,12 +34,13 @@ if submitted:
         data =  {
     "contents": [{
         "parts": [{
-            "text": f"ชื่อ: {name}\nวันเกิด: {dob}\nเวลาเกิด: {time_of_birth}\nคำถาม: {question}"
+            "text": prompt
         }]
     }]
 }
         response = requests.post(url,json=data)
         print(response.json())
+
     """try:
             # ส่ง request ไป Gemini API
             response = requests.post(f"{url}?key={api_key}", json=payload, headers=headers, timeout=15)
