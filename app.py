@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 import pandas as pd
 from datetime import date
+import base64
 
 st.set_page_config(
     page_title="เว็บดูดวง",
@@ -83,7 +84,7 @@ question = st.text_area("คำถามที่อยากถาม")
 # --- ปุ่มส่งคำถาม ---
 if st.button("ดูดวง"):
     if not (name and time_of_birth and question and api_key):
-        st.warning("กรุณากรอกทุกช่องให้ครบ")
+        st.warning("กรุณากรอกทุกช่องให้ครบถ้วน รวมถึง API Key")
     else:
         st.info("กรุณาตั้งจิตอธิษฐานและรอผลคำทำนายซักครู่...")
 
@@ -123,4 +124,8 @@ if st.button("ดูดวง"):
             "คำทำนาย": [answer]
         })
         st.subheader("สรุปคำทำนายของคุณ")
-        st.dataframe(df)
+        st.table(df.T)
+
+        csv = df.to_csv(index=False)
+        b64 = base64.b64encode(csv.encode()).decode()
+        st.markdown(f'<a href="data:file/csv;base64,{b64}" download="horoscope.csv"><button>ดาวน์โหลดผล CSV</button></a>', unsafe_allow_html=True)
