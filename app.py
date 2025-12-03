@@ -1,45 +1,60 @@
 import streamlit as st
 import requests
-from datetime import datetime
 
-st.set_page_config(page_title="เว็บดูดวง AI", layout="centered")
-st.title("เว็บดูดวงด้วย Gemini AI ✨")
+st.set_page_config(page_title="เว็บดูดวง Gemini", page_icon="🔮")
 
-# --- ฟอร์มกรอกข้อมูลผู้ใช้ ---
-with st.form("user_form"):
-    name = st.text_input("ชื่อของคุณ")
-    dob = st.date_input("วันเกิด")
-    time_of_birth = st.text_input("เวลาเกิด (เช่น 02:45)")
-    question = st.text_area("คำถามเกี่ยวกับดวงชะตาของคุณ")
-    api_key = st.text_input("กรอก Gemini API Key ของคุณ (AIzaSy...)", type="password")
-    
-    submitted = st.form_submit_button("ถามดวง")
+st.title("🔮 เว็บดูดวง Gemini 2.0 Flash")
 
-if submitted:
-    if not all([name, dob, time_of_birth, question, api_key]):
-        st.warning("กรุณากรอกทุกช่องให้ครบ")
+# --- ฟอร์มรับ input ---
+name = st.text_input("ชื่อ")
+dob = st.date_input("วันเกิด")
+time_of_birth = st.text_input("เวลาเกิด (เช่น 02:45)")
+question = st.text_area("คำถามที่อยากถาม")
+
+api_key = st.text_input("API Key (Gemini 2.0 Flash)", type="password")
+
+# --- ปุ่มส่งคำถาม ---
+if st.button("ส่งคำถาม"):
+    if not (name and dob and time_of_birth and question and api_key):
+        st.warning("กรุณากรอกทุกช่อง")
     else:
-        # --- เตรียมข้อความที่จะส่งให้ Gemini ---
+        # --- สร้าง prompt ---
         prompt = f"""
-        ชื่อ: {name}
-        วันเกิด: {dob.strftime('%d/%m/%Y')}
-        เวลาเกิด: {time_of_birth}
-        
-        คำถาม: {question}
-        
-        กรุณาตอบคำถามเกี่ยวกับดวงชะตาของผู้ใช้
-        """
+ชื่อ: {name}
+วันเกิด: {dob.strftime('%d/%m/%Y')}
+เวลาเกิด: {time_of_birth}
 
-        url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
-        data =  {
-    "contents": [{
-        "parts": [{
-            "text": prompt
-        }]
-    }]
-}
-        response = requests.post(url,json=data)
-        print(response.json())
+คำถาม: {question}
+
+กรุณาตอบคำถามเกี่ยวกับดวงชะตาของผู้ใช้
+"""
+
+        # --- ตั้ง URL ของ Gemini 2.0 Flash ---
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateText?key={api_key}"
+
+        # --- body ของ request ---
+        data = {
+            "prompt": prompt,
+            "temperature": 0.7,
+            "maxOutputTokens": 500
+        }
+
+        # --- ส่ง request ---
+        try:
+            response = requests.post(url, json=data)
+            
+            if response.status_code == 200:
+                res_json = response.json()
+                # Gemini 2.0 Flash ส่งข้อความใน candidates[0].output
+                answer = res_json['candidates'][0]['output']
+                st.subheader("คำตอบจาก AI:")
+                st.write(answer)
+            else:
+                st.error(f"เกิดข้อผิดพลาด {response.status_code}")
+                st.text(response.text)
+        except Exception as e:
+            st.error(f"เกิดข้อผิดพลาดในการเชื่อมต่อ API: {e}")
+
 
     #try:
             # ส่ง request ไป Gemini API
