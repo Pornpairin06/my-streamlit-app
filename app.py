@@ -4,13 +4,12 @@ import pandas as pd
 from datetime import date
 
 st.set_page_config(
-    page_title="เว็บดูดวง",
+    page_title="MysticStar",
     page_icon="🔮",
     layout="centered",
     initial_sidebar_state="expanded"
 )
 
-# --- ใช้ CSS สำหรับธีมสีและ background หมู่ดาว ---
 st.markdown(
     """
     <style>
@@ -60,11 +59,11 @@ st.markdown(
 
 st.title("🔮 MysticStar - เว็บพยากรณ์ดวงชะตายุคใหม่")
 
-# --- Sidebar API Key ---
+# Sidebar API Key
 st.sidebar.header("API Key ของ Google Gemini(2.0 Flash)")
 api_key = st.sidebar.text_input("ใส่ API Key ของคุณ", type="password")
 
-# --- Input จากผู้ใช้ ---
+# Input จากผู้ใช้
 name = st.text_input("ชื่อ")
 col1, col2, col3 = st.columns(3)
 
@@ -80,18 +79,16 @@ dob = f"{day:02d}/{month}/{year}"
 time_of_birth = st.text_input("เวลาเกิด (เช่น 12:00)")
 question = st.text_area("คำถามที่อยากถาม")
 
-# --- ปุ่มส่งคำถาม ---
 if st.button("ดูดวง"):
     if not (name and time_of_birth and question and api_key):
         st.warning("กรุณากรอกทุกช่องให้ครบถ้วน รวมถึง API Key")
     else:
         st.info("กรุณาตั้งจิตอธิษฐานและรอผลคำทำนายซักครู่...")
 
-        # --- prompt ---
+        # prompt
         prompt = f"ชื่อ: {name}\nวันเกิด: {dob}\nเวลาเกิด: {time_of_birth}\nคำถาม: {question}\nกรุณาตอบคำถามเกี่ยวกับดวงชะตาของผู้ใช้"
 
-        # --- URL Gemini 2.0 Flash (ถ้า enable) ---
-        model_name = "gemini-2.0-flash"  # ต้อง enable จริงในบัญชีของคุณ
+        model_name = "gemini-2.0-flash" 
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateText?key={api_key}"
 
         data = {
@@ -110,11 +107,10 @@ if st.button("ดูดวง"):
         except Exception as e:
             answer = f"เกิดข้อผิดพลาดในการเชื่อมต่อ API: {e}"
 
-        # --- แสดงผลแบบสวย ๆ ---
+        # แสดงผล-
         st.subheader("คำทำนายของคุณ:")
         st.markdown(f"<div style='background-color:#9370DB;padding:15px;border-radius:10px'>{answer}</div>", unsafe_allow_html=True)
 
-        # --- เก็บผลใน dataframe ---
         df = pd.DataFrame({
             "ชื่อ": [name],
             "วันเกิด": [dob],
@@ -129,18 +125,18 @@ if st.button("ดูดวง"):
     'white-space': 'normal',
     'word-wrap': 'break-word'
 }))
-        # --- ปุ่มดาวน์โหลด CSV แบบไม่ต้อง base64 ---
+        # ปุ่มดาวน์โหลด
         csv_data = df.to_csv(index=False)
         st.download_button(
-    label="ดาวน์โหลดผล CSV",
+    label="ดาวน์โหลดผลคำทำนาย",
     data=csv_data,
     file_name="horoscope.csv",
     mime="text/csv"
 )
 
-        # --- ปุ่มแชร์คำทำนาย ---
+        # ปุ่มแชร์คำทำนาย
         st.subheader("แชร์ผลคำทำนาย")
-        share_text = answer.replace('"', '\\"')  # escape double quotes
+        share_text = answer.replace('"', '\\"') 
 
         st.markdown(f"""
         <button onclick="navigator.clipboard.writeText('{share_text}').then(()=>{{alert('คัดลอกข้อความเรียบร้อย!')}})">คัดลอกผลคำทำนายไปแชร์</button>
