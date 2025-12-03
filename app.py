@@ -123,7 +123,20 @@ if st.button("ดูดวง"):
             "คำทำนาย": [answer]
         })
         st.subheader("สรุปคำทำนายของคุณ")
-        st.table(df.T, df.style_set_properties(**{'color': 'white', 'background-color': '#4B0082'}))
+        st.dataframe(df.T.style.set_properties(**{
+    'color': 'white',
+    'background-color': '#4B0082',
+    'white-space': 'normal',
+    'word-wrap': 'break-word'
+}))
+        # --- ปุ่มดาวน์โหลด CSV แบบไม่ต้อง base64 ---
+        csv_data = df.to_csv(index=False)
+        st.download_button(
+    label="ดาวน์โหลดผล CSV",
+    data=csv_data,
+    file_name="horoscope.csv",
+    mime="text/csv"
+)
 
         # --- ปุ่มแชร์คำทำนาย ---
         st.subheader("แชร์ผลคำทำนาย")
