@@ -15,7 +15,6 @@ st.set_page_config(
 st.markdown(
     """
     <style>
-    /* Background หมู่ดาว */
     .stApp {
         background: radial-gradient(ellipse at bottom, #1a1a2e 0%, #0f0f1e 100%);
         color: #ffffff;
@@ -25,7 +24,6 @@ st.markdown(
         background-attachment: fixed;
     }
 
-    /* ปรับ Card ของ Streamlit */
     .stButton>button {
         background-color: #8a2be2;
         color: white;
@@ -200,7 +198,7 @@ if st.button("ดูดวง"):
 
         st.title("กราฟโชคลาภของคุณ 🌟")
         categories = ['ความรัก', 'การงาน', 'การเงิน', 'สุขภาพ']
-        values = [random.randint(50, 100) for _ in categories]
+        values = [random.randint(0, 100) for _ in categories]
 
         df = pd.DataFrame({'หมวด': categories, 'เปอร์เซ็นต์โชค': values})
 
