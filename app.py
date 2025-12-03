@@ -47,15 +47,21 @@ st.markdown(
     h1, h2, h3, h4, h5 {
         color: #dda0dd;
     }
+
+    /* เปลี่ยนสี label ของ input */
+    label, .stTextInput>label, .stTextArea>label, .stSelectbox>label {
+        color: white;
+        font-weight: bold;
+    }
     </style>
     """,
     unsafe_allow_html=True
 )
 
-st.title("🔮 เว็บดูดวง Gemini 2.0 Flash")
+st.title("🔮 MysticStar - เว็บพยากรณ์ดวงชะตายุคใหม่")
 
 # --- Sidebar API Key ---
-st.sidebar.header("API Key ของ Google Gemini")
+st.sidebar.header("API Key ของ Google Gemini(2.0 Flash)")
 api_key = st.sidebar.text_input("ใส่ API Key ของคุณ", type="password")
 
 # --- Input จากผู้ใช้ ---
@@ -71,7 +77,7 @@ with col3:
     year = st.selectbox("ปีเกิด (ค.ศ.)", list(range(1950, date.today().year+1)))
 
 dob = f"{day:02d}/{month}/{year}"
-time_of_birth = st.text_input("เวลาเกิด (เช่น 02:45)")
+time_of_birth = st.text_input("เวลาเกิด (เช่น 12:00)")
 question = st.text_area("คำถามที่อยากถาม")
 
 # --- ปุ่มส่งคำถาม ---
@@ -79,7 +85,7 @@ if st.button("ดูดวง"):
     if not (name and time_of_birth and question and api_key):
         st.warning("กรุณากรอกทุกช่องให้ครบ")
     else:
-        st.info("กำลังติดต่อ AI เพื่อดูดวง...")
+        st.info("กรุณาตั้งจิตอธิษฐานและรอผลคำทำนายซักครู่...")
 
         # --- prompt ---
         prompt = f"ชื่อ: {name}\nวันเกิด: {dob}\nเวลาเกิด: {time_of_birth}\nคำถาม: {question}\nกรุณาตอบคำถามเกี่ยวกับดวงชะตาของผู้ใช้"
@@ -114,10 +120,12 @@ if st.button("ดูดวง"):
             "วันเกิด": [dob],
             "เวลาเกิด": [time_of_birth],
             "คำถาม": [question],
-            "คำตอบ AI": [answer]
+            "คำทำนาย": [answer]
         })
-        st.subheader("ผลสรุป")
+        st.subheader("สรุปคำทำนายของคุณ")
         st.dataframe(df)
 
         # --- ปุ่มแชร์ (link example) ---
-        st.markdown('<a href="#" target="_blank"><button>แชร์ผลคำทำนาย</button></a>', unsafe_allow_html=True)
+        share_text = f"คำทำนายของคุณ{name}: {answer}"
+        if st.button("แชร์ผลคำทำนาย"):
+            st.text_area("คัดลอกข้อความด้านล่างเพื่อแชร์:", share_text, height=150)
