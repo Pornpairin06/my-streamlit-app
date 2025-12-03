@@ -5,7 +5,7 @@ from datetime import date
 
 st.set_page_config(page_title="🔮 เว็บดูดวง Gemini", page_icon="🔮", layout="wide")
 
-# --- ธีมสีม่วง ---
+# --- ธีมสีม่วง --
 st.markdown(
     """
     <style>
