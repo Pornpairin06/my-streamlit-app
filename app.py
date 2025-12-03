@@ -54,20 +54,59 @@ st.markdown(
     }
 
     .crystal-ball {
-    width: 180px;
-    height: 180px;
+    width: 200px;
+    height: 200px;
     margin: auto;
     margin-bottom: 20px;
     border-radius: 50%;
-    background: radial-gradient(circle at 30% 30%, #ffffff55, #7b2ff7cc, #000000dd);
-    box-shadow: 0 0 30px #c084f5, 0 0 60px #a855f7, inset 0 0 30px #ffffff33;
-    animation: glow 4s ease-in-out infinite alternate;
+    position: relative;
+    background: radial-gradient(circle at 30% 30%, #ffffff66, #8a2be2cc, #000000dd);
+    box-shadow:
+        0 0 25px #c084f5,
+        0 0 50px #a855f7,
+        inset 0 0 30px #ffffff44;
+    
+    /* อนิเมชันรวมเพื่อให้ดูเหมือนมีพลัง */
+    animation: float 4s ease-in-out infinite alternate,
+               rotateGlow 12s linear infinite;
     }
 
-    @keyframes glow {
-    0% { box-shadow: 0 0 20px #c084f5, 0 0 40px #a855f7, inset 0 0 20px #ffffff33; }
-    100% { box-shadow: 0 0 40px #e879f9, 0 0 80px #c084f5, inset 0 0 40px #ffffff55; }
-   }
+    .crystal-ball::before {
+    content: "";
+    position: absolute;
+    top: 10%;
+    left: 10%;
+    width: 80%;
+    height: 80%;
+    border-radius: 50%;
+    background: radial-gradient(circle, #ffffff33, #ffffff00);
+    animation: innerSpin 6s linear infinite;
+    }
+
+    @keyframes float {
+    0% { transform: translateY(0px); }
+    100% { transform: translateY(-12px); }
+    }
+
+    @keyframes rotateGlow {
+    0% { box-shadow:
+            0 0 25px #c084f5,
+            0 0 50px #a855f7,
+            inset 0 0 30px #ffffff44; }
+    50% { box-shadow:
+            0 0 35px #d8b4fe,
+            0 0 70px #c084f5,
+            inset 0 0 40px #ffffff66; }
+    100% { box-shadow:
+            0 0 25px #c084f5,
+            0 0 50px #a855f7,
+            inset 0 0 30px #ffffff44; }
+    }
+
+    @keyframes innerSpin {
+    0% { transform: rotate(0deg); filter: blur(2px); }
+    100% { transform: rotate(360deg); filter: blur(4px); }
+    }
    </style>
 
    <div class="crystal-ball"></div>
@@ -144,7 +183,7 @@ if st.button("ดูดวง"):
             "คำทำนาย": [answer]
         })
         st.subheader("สรุปคำทำนายของคุณ")
-        st.dataframe(df.T.style.set_properties(**{
+        st.table(df.T.style.set_properties(**{
     'color': 'white',
     'background-color': '#4B0082',
     'white-space': 'normal',
@@ -160,9 +199,5 @@ if st.button("ดูดวง"):
 )
 
         # ปุ่มแชร์คำทำนาย
-        st.subheader("แชร์ผลคำทำนาย")
+        st.subheader("คัดลอกผลคำทำนายไปแชร์ได้เลย!")
         share_text = answer.replace('"', '\\"') 
-
-        st.markdown(f"""
-        <button onclick="navigator.clipboard.writeText('{share_text}').then(()=>{{alert('คัดลอกข้อความเรียบร้อย!')}})">คัดลอกผลคำทำนายไปแชร์</button>
-        """, unsafe_allow_html=True)
