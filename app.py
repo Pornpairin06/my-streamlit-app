@@ -111,7 +111,7 @@ st.markdown(
     """,
     unsafe_allow_html=True)
 
-st.title("🔮 MysticStar - เว็บพยากรณ์ดวงชะตายุคใหม่")
+st.title("🔮 MysticStar - เว็บพยากรณ์ดวงชะตาสำหรับคนยุคใหม่")
 
 # Sidebar API Key
 st.sidebar.header("API Key ของ Google Gemini(2.0 Flash)")
