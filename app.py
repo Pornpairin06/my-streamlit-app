@@ -127,5 +127,6 @@ if st.button("ดูดวง"):
 
         # --- ปุ่มแชร์ (link example) ---
         share_text = f"คำทำนายของคุณ{name}: {answer}"
-        if st.button("แชร์ผลคำทำนาย"):
+        st.subheader("แชร์ผลคำทำนาย")
+        if st.button("คัดลอกข้อความคำทำนาย"):
             st.text_area("คัดลอกข้อความด้านล่างเพื่อแชร์:", share_text, height=150)
