@@ -123,7 +123,7 @@ if st.button("ดูดวง"):
             "คำทำนาย": [answer]
         })
         st.subheader("สรุปคำทำนายของคุณ")
-        st.table(df.T)
+        st.table(df.T, df.style_set_properties(**{'color': 'white', 'background-color': '#4B0082'}))
 
         # --- ปุ่มแชร์คำทำนาย ---
         st.subheader("แชร์ผลคำทำนาย")
