@@ -142,7 +142,7 @@ if st.button("ดูดวง"):
         st.info("กรุณาตั้งจิตอธิษฐานและรอผลคำทำนายซักครู่...")
 
         # prompt
-        prompt = f"ชื่อ: {name}\nวันเกิด: {dob}\nเวลาเกิด: {time_of_birth}\nคำถาม: {question}\nกรุณาตอบคำถามด้วยหลักโหราศาสตร์ไทย + วิเคราะห์เชิงลึก อ่านง่าย ให้คำแนะนำที่ปฏิบัติได้จริง"
+        prompt = f"ชื่อ: {name}\nวันเกิด: {dob}\nเวลาเกิด: {time_of_birth}\nคำถาม: {question}\nกรุณาตอบคำถามด้วยหลักโหราศาสตร์ไทย พร้อมให้คำแนะนำ ขอไม่เกิน 500 คำ"
 
         model_name = "gemini-2.0-flash" 
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
