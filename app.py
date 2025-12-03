@@ -3,21 +3,53 @@ import requests
 import pandas as pd
 from datetime import date
 
-st.set_page_config(page_title="🔮 เว็บดูดวง Gemini", page_icon="🔮", layout="wide")
+st.set_page_config(
+    page_title="เว็บดูดวง",
+    page_icon="🔮",
+    layout="centered",
+    initial_sidebar_state="expanded"
+)
 
-# --- ธีมสีม่วง --
+# --- ใช้ CSS สำหรับธีมสีและ background หมู่ดาว ---
 st.markdown(
     """
     <style>
-    body {
-        background: radial-gradient(#4B0082, #000); /* สีม่วงเข้มไล่ดำ */
-        background-image: url('https://share.google/images/Wb8IJDRCv7cegnXj2'); /* ใส่ภาพดาวเป็น background overlay */
+    /* Background หมู่ดาว */
+    .stApp {
+        background: radial-gradient(ellipse at bottom, #1a1a2e 0%, #0f0f1e 100%);
+        color: #ffffff;
+        background-image: url('https://static.thairath.co.th/media/PZnhTOtr5D3rd9oc97Dle3eYpO4IIFDAjc2SdH2Ps199kVj.jpg'); /* ตัวอย่างดาว */
         background-size: cover;
         background-repeat: no-repeat;
         background-attachment: fixed;
     }
+
+    /* ปรับ Card ของ Streamlit */
+    .stButton>button {
+        background-color: #8a2be2;
+        color: white;
+        border-radius: 10px;
+        height: 40px;
+        width: 100%;
+        font-size: 16px;
+    }
+
+    .stTextInput>div>div>input {
+        background-color: #f3e6ff;
+        color: #000000;
+    }
+
+    .stSelectbox>div>div>div>select {
+        background-color: #f3e6ff;
+        color: #000000;
+    }
+
+    h1, h2, h3, h4, h5 {
+        color: #dda0dd;
+    }
     </style>
-    """, unsafe_allow_html=True
+    """,
+    unsafe_allow_html=True
 )
 
 st.title("🔮 เว็บดูดวง Gemini 2.0 Flash")
