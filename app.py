@@ -52,10 +52,27 @@ st.markdown(
         color: white;
         font-weight: bold;
     }
-    </style>
+
+    .crystal-ball {
+    width: 180px;
+    height: 180px;
+    margin: auto;
+    margin-bottom: 20px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #ffffff55, #7b2ff7cc, #000000dd);
+    box-shadow: 0 0 30px #c084f5, 0 0 60px #a855f7, inset 0 0 30px #ffffff33;
+    animation: glow 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow {
+    0% { box-shadow: 0 0 20px #c084f5, 0 0 40px #a855f7, inset 0 0 20px #ffffff33; }
+    100% { box-shadow: 0 0 40px #e879f9, 0 0 80px #c084f5, inset 0 0 40px #ffffff55; }
+   }
+   </style>
+
+   <div class="crystal-ball"></div>
     """,
-    unsafe_allow_html=True
-)
+    unsafe_allow_html=True)
 
 st.title("🔮 MysticStar - เว็บพยากรณ์ดวงชะตายุคใหม่")
 
@@ -86,21 +103,29 @@ if st.button("ดูดวง"):
         st.info("กรุณาตั้งจิตอธิษฐานและรอผลคำทำนายซักครู่...")
 
         # prompt
-        prompt = f"ชื่อ: {name}\nวันเกิด: {dob}\nเวลาเกิด: {time_of_birth}\nคำถาม: {question}\nกรุณาตอบคำถามเกี่ยวกับดวงชะตาของผู้ใช้"
+        prompt = f"ชื่อ: {name}\nวันเกิด: {dob}\nเวลาเกิด: {time_of_birth}\nคำถาม: {question}\nกรุณาตอบคำถามด้วยหลักโหราศาสตร์ไทย + วิเคราะห์เชิงลึก อ่านง่าย ให้คำแนะนำที่ปฏิบัติได้จริง"
 
         model_name = "gemini-2.0-flash" 
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateText?key={api_key}"
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
 
         data = {
-            "prompt": {"text": prompt},
-            "temperature": 0.7,
-            "maxOutputTokens": 500
+            "contents": [
+                {
+                    "parts": [
+                        {"text": prompt}
+                    ]
+                }
+            ],
+            "generationConfig": {
+                "temperature": 0.7,
+                "maxOutputTokens": 500
+            }
         }
 
         try:
             response = requests.post(url, json=data)
             if response.status_code == 200:
-                answer = response.json()['candidates'][0]['output']
+                answer = response.json()['candidates'][0]['content']['parts'][0]['text']
             else:
                 answer = f"เกิดข้อผิดพลาด {response.status_code}:\n{response.text}"
 
