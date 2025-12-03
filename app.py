@@ -49,7 +49,6 @@ st.markdown(
         color: #dda0dd;
     }
 
-    /* เปลี่ยนสี label ของ input */
     label, .stTextInput>label, .stTextArea>label, .stSelectbox>label {
         color: white;
         font-weight: bold;
@@ -68,7 +67,6 @@ st.markdown(
         0 0 50px #a855f7,
         inset 0 0 30px #ffffff44;
     
-    /* อนิเมชันรวมเพื่อให้ดูเหมือนมีพลัง */
     animation: float 4s ease-in-out infinite alternate,
                rotateGlow 12s linear infinite;
     }
@@ -201,17 +199,11 @@ if st.button("ดูดวง"):
 )
 
         st.title("กราฟโชคลาภของคุณ 🌟")
-
-# หมวดโชค
         categories = ['ความรัก', 'การงาน', 'การเงิน', 'สุขภาพ']
-
-# สุ่มเปอร์เซ็นต์โชค
         values = [random.randint(50, 100) for _ in categories]
 
-# สร้าง DataFrame
         df = pd.DataFrame({'หมวด': categories, 'เปอร์เซ็นต์โชค': values})
 
-# แสดงกราฟ bar
         chart = alt.Chart(df).mark_bar().encode(
     x='หมวด',
     y='เปอร์เซ็นต์โชค',
