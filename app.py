@@ -2,7 +2,6 @@ import streamlit as st
 import requests
 import pandas as pd
 from datetime import date
-import base64
 
 st.set_page_config(
     page_title="เว็บดูดวง",
@@ -126,6 +125,10 @@ if st.button("ดูดวง"):
         st.subheader("สรุปคำทำนายของคุณ")
         st.table(df.T)
 
-        csv = df.to_csv(index=False)
-        b64 = base64.b64encode(csv.encode()).decode()
-        st.markdown(f'<a href="data:file/csv;base64,{b64}" download="horoscope.csv"><button>ดาวน์โหลดผล CSV</button></a>', unsafe_allow_html=True)
+        # --- ปุ่มแชร์คำทำนาย ---
+        st.subheader("แชร์ผลคำทำนาย")
+        share_text = answer.replace('"', '\\"')  # escape double quotes
+
+        st.markdown(f"""
+        <button onclick="navigator.clipboard.writeText('{share_text}').then(()=>{{alert('คัดลอกข้อความเรียบร้อย!')}})">คัดลอกผลคำทำนายไปแชร์</button>
+        """, unsafe_allow_html=True)
